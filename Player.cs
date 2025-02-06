@@ -28,5 +28,16 @@ namespace SpartanTeamProject
             MaxHealth = maxHealth;
             Gold = gold;
         }
+
+        public void Info()
+        {
+            Console.WriteLine($"Lv. {Level}");
+            Console.WriteLine($"{Name} ( {Job} )");
+            Console.WriteLine($"공격력 : {Attack}");
+            Console.WriteLine($"방어력 : {Deffense}");
+            Console.WriteLine($"현재 체력 : {Health}");
+            Console.WriteLine($"최대 체력 : {MaxHealth}");
+            Console.WriteLine($"Gold : {Gold} G");
+        }
     }
 }
