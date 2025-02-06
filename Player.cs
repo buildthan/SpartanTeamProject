@@ -8,14 +8,14 @@ namespace SpartanTeamProject
 {
     public class Player
     {
-        string Name { get; set; }
-        int Level { get; set; }
-        string Job {  get; set; }
-        float Attack { get; set; }
-        float Deffense { get; set; }
-        float Health { get; set; }
-        float MaxHealth { get; set; }
-        float Gold { get; set; }
+        public string Name { get; set; }
+        public int Level { get; set; }
+        public string Job {  get; set; }
+        public double Attack { get; set; }
+        public double Deffense { get; set; }
+        public double Health { get; set; }
+        public double MaxHealth { get; set; }
+        public double Gold { get; set; }
 
         public Player(string name, int level, string job, float attack, float deffense, float health, float maxHealth, float gold)
         {

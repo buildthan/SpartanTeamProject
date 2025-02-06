@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpartanTeamProject
 {
-    internal class ConsoleUtility
+    public class ConsoleUtility
     {
         public static int GetInput(int min, int max)
         {
@@ -44,5 +44,13 @@ namespace SpartanTeamProject
                 }
             }
         }
+
+        public static void ForegroundColor_DarkGray(string s) //글씨색을 회색으로 바꿈
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(s);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
     }
 }
