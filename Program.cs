@@ -222,8 +222,9 @@ class GameManager
         {
             int input = ConsoleUtility.GetInput(0, battleList.Count);
 
-            if (input == 0) //다음을 눌렀다면
+            if (input == 0) //취소를 눌렀다면
             {
+                EnemyPhase();
                 break;
                 //바로 Enemy Phase 시작
             }
@@ -245,23 +246,22 @@ class GameManager
 
     public void AttackResultScreen(int input) //공격 결과창
     {
+        int enemy_down_count = 0;
+
         Random rand = new Random();
         Console.Clear();
         Console.WriteLine("Battle!!");
         Console.WriteLine("");
         Console.WriteLine($"{player.Name} 의 공격!");
 
-        int damage = 0;
-        double difference = 0;
-        difference = Math.Ceiling(player.Attack*0.1);
-        damage = rand.Next((int)player.Attack-(int)difference, (int)player.Attack+(int)difference+1);
+        int damage = player.PlayerAttack();
             
         Console.WriteLine($"Lv.{battleList[input-1].Level} {battleList[input-1].Name} 을(를) 맞췄습니다. [데미지 : {damage}]");
         Console.WriteLine("");
         Console.WriteLine($"Lv.{battleList[input - 1].Level} {battleList[input - 1].Name}");
         Console.Write($"HP {battleList[input-1].Health} -> ");
         battleList[input - 1].Health = battleList[input - 1].Health - damage;
-        if(battleList[input - 1].Health < 0)
+        if(battleList[input - 1].Health <= 0)
         {
             battleList[input - 1].Health = 0;
             ConsoleUtility.ForegroundColor_DarkGray("Dead");
@@ -271,15 +271,160 @@ class GameManager
             Console.WriteLine($"{battleList[input-1].Health}");
         }
         Console.WriteLine("");
-
         Console.WriteLine("0.다음");
         Console.WriteLine("");
 
+        for(int i = 0; i<battleList.Count; i++) //적들이 얼마나 쓰러졌는지 체크
+        {
+            if(battleList[i].Health <= 0)
+            {
+                enemy_down_count++;
+            }
+        }
+
         int Input = ConsoleUtility.GetInput(0,0);
 
-        //아래는 디버그용으로 써둔 명령어
-        AttackScreen();
-        //이후에 에너미 페이즈 시작할 것
+        while (true)
+        {
+            if (enemy_down_count == battleList.Count) //적들이 모두 쓰러졌다면
+            {
+                //Victory 결과창 출력
+                Victory();
+                break;
+            }
+
+            if (player.Health <= 0) //플레이어 체력이 바닥이 났다면
+            {
+                //Lose 결과창 출력
+                Lose();
+                break;
+            }
+
+            if (player.Health > 0) //플레이어 체력이 여전히 남아있다면
+            {
+                EnemyPhase(); //적 공격 차례 시작
+                break;
+            }
+        }
+    }
+
+    public void EnemyPhase() //적의 공격 차례
+    {
+        int enemy_down_count = 0;
+
+        for (int i = 0; i<battleList.Count; i++) //적의 개수만큼 반복
+        {
+            if (battleList[i].Health <= 0) //죽은 적이 있다면 스킵
+            {
+                continue;
+            }
+
+            Console.Clear();
+            Console.WriteLine("Battle!!");
+            Console.WriteLine("");
+            Console.WriteLine($"Lv. {battleList[i].Level} {battleList[i].Name} 의 공격!");
+
+            int damage = battleList[i].MonsterAttack();
+
+            Console.WriteLine($"{player.Name} 을/를 맞췄습니다. [데미지 : {damage}]");
+            Console.WriteLine("");
+            Console.WriteLine($"Lv. {player.Level} {player.Name}");
+            Console.Write($"HP {player.Health} -> ");
+            player.Health = player.Health - damage;
+            if (player.Health <= 0)
+            {
+                player.Health = 0;
+                ConsoleUtility.ForegroundColor_DarkGray("Dead");
+            }
+            else
+            {
+                Console.WriteLine($"{player.Health}");
+            }
+            Console.WriteLine("");
+            Console.WriteLine("0.다음");
+            Console.WriteLine("");
+
+            int Input = ConsoleUtility.GetInput(0, 0);
+
+            if (player.Health <= 0) //플레이어가 맞아 쓰러졌다면 바로 게임 종료
+            {
+                break;
+            }
+
+        }
+
+        for (int i = 0; i < battleList.Count; i++) //적들이 얼마나 쓰러졌는지 체크
+        {
+            if (battleList[i].Health <= 0)
+            {
+                enemy_down_count++;
+            }
+        }
+
+        while (true)
+        {
+            if (enemy_down_count == battleList.Count) //적들이 모두 쓰러졌다면
+            {
+                //Victory 결과창 출력
+                Victory();
+                break;
+            }
+
+            if (player.Health <= 0) //플레이어 체력이 바닥이 났다면
+            {
+                //Lose 결과창 출력
+                Lose();
+                break;
+            }
+
+            if (player.Health > 0) //플레이어 체력이 여전히 남아있다면
+            {
+                AttackScreen(); //플레이어 차례로 복귀
+                break;
+            }
+        }
+    }
+
+    public void Victory()
+    {
+        Console.Clear();
+
+        Console.WriteLine("Battle!! - Result");
+        Console.WriteLine("");
+        Console.WriteLine("Victory");
+        Console.WriteLine("");
+        Console.WriteLine($"던전에서 몬스터 {battleList.Count}마리를 잡았습니다.");
+        Console.WriteLine("");
+        Console.WriteLine($"Lv. {player.Level} {player.Name}");
+        Console.WriteLine($"HP {player.MaxHealth} -> {player.Health}");
+        Console.WriteLine("");
+        Console.WriteLine("0.다음");
+        Console.WriteLine("");
+
+        int Input = ConsoleUtility.GetInput(0, 0);
+
+        player.Health = player.MaxHealth; // 메인화면으로 돌아가기 전에 체력 회복해줌.
+        MainScreen();
+    }
+
+    public void Lose()
+    {
+        Console.Clear();
+
+        Console.WriteLine("Battle!! - Result");
+        Console.WriteLine("");
+        Console.WriteLine("You Lose");
+        Console.WriteLine("");
+        Console.WriteLine($"Lv. {player.Level} {player.Name}");
+        Console.WriteLine($"HP {player.MaxHealth} -> {player.Health}");
+        Console.WriteLine("");
+        Console.WriteLine("0.다음");
+        Console.WriteLine("");
+
+        int Input = ConsoleUtility.GetInput(0, 0);
+
+        player.Health = player.MaxHealth; //메인화면으로 돌아가기 전에 체력 회복해줌.
+        MainScreen();
     }
 
 }

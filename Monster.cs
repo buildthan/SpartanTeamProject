@@ -24,6 +24,18 @@ namespace SpartanTeamProject
             Attack = attack;
         }
 
+        public int MonsterAttack()
+        {
+            Random rand = new Random();
+
+            int damage = 0;
+            double difference = 0;
+            difference = Math.Ceiling(Attack * 0.1);
+            damage = rand.Next((int)Attack - (int)difference, (int)Attack + (int)difference + 1);
+
+            return damage;
+        }
+
 
     }
 }

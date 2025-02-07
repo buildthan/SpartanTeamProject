@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,8 +25,8 @@ namespace SpartanTeamProject
             Job = job; 
             Attack = attack;
             Deffense = deffense;
-            Health = health;
-            MaxHealth = maxHealth;
+            Health = health; //현재 체력
+            MaxHealth = maxHealth;//최대 체력
             Gold = gold;
         }
 
@@ -38,6 +39,18 @@ namespace SpartanTeamProject
             Console.WriteLine($"현재 체력 : {Health}");
             Console.WriteLine($"최대 체력 : {MaxHealth}");
             Console.WriteLine($"Gold : {Gold} G");
+        }
+
+        public int PlayerAttack()
+        {
+            Random rand = new Random();
+
+            int damage = 0;
+            double difference = 0;
+            difference = Math.Ceiling(Attack * 0.1);
+            damage = rand.Next((int)Attack - (int)difference, (int)Attack + (int)difference + 1);
+
+            return damage;
         }
     }
 }
